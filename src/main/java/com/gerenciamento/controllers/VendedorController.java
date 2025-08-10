@@ -10,19 +10,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gerenciamento.dto.ItemPedidoDTO;
 import com.gerenciamento.dto.PedidoDTO;
+import com.gerenciamento.dto.VendedorDTO;
 import com.gerenciamento.dto.request.ItemPedidoCreateDTO;
 import com.gerenciamento.dto.request.PedidoCreateDTO;
 import com.gerenciamento.entities.ItemPedido;
 import com.gerenciamento.entities.Pedido;
+import com.gerenciamento.entities.Vendedor;
 import com.gerenciamento.service.VendedorService;
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/vendedor")
 public class VendedorController {
 	
 	private VendedorService vendedorService;
 	
-	@PostMapping("/cadastrar")
+	@PostMapping("/cadastrar-vendedor")
+	public ResponseEntity<VendedorDTO> cadastrarVendedor(@RequestBody String nome){
+		Optional<Vendedor> vendedor = vendedorService.cadastrarVendedor(nome);
+		VendedorDTO vendedorDto = new VendedorDTO(vendedor.get());
+		
+		return ResponseEntity.ok(vendedorDto);
+		
+	}
+	
+	@PostMapping("/cadastrar-pedido")
 	public ResponseEntity<PedidoDTO> cadastrarPedido(@RequestBody PedidoCreateDTO dto){
 		Optional<Pedido> pedido = vendedorService.cadastrarPedido(dto.getVendedor());
 		PedidoDTO pedidoDto = new PedidoDTO(pedido.get());
@@ -31,6 +42,7 @@ public class VendedorController {
 		
 	}
 	
+	@PostMapping("/inserir-item")
 	public ResponseEntity<ItemPedidoDTO> inserirItem(@RequestBody ItemPedidoCreateDTO dto){
 		Optional <ItemPedido> itemPedido = vendedorService.inserirItens(dto.getIdPedido(), dto.getIdEmpresa(), 
 				dto.getIdProduto(), dto.getQuantidade(), dto.getPreco());
